@@ -46,4 +46,9 @@ if ($LASTEXITCODE -ne 0) { throw 'Desktop EXE compilation failed' }
 Copy-Item -LiteralPath (Join-Path $taskSource '创建桌面快捷方式.ps1') -Destination $taskOutput
 foreach ($taskDoc in @('LICENSE','THIRD_PARTY_NOTICES.md')) { Copy-Item -LiteralPath (Join-Path $taskApp $taskDoc) -Destination $taskOutput }
 Copy-Item -LiteralPath (Join-Path $taskApp 'docs\使用说明.md') -Destination $taskOutput
-Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $taskOutput '云代账.exe') | Format-List Path,Hash
+$taskExePath=Join-Path $taskOutput '云代账.exe'
+$taskHasher=[System.Security.Cryptography.SHA256]::Create()
+$taskStream=[System.IO.File]::OpenRead($taskExePath)
+try { $taskDigest=[BitConverter]::ToString($taskHasher.ComputeHash($taskStream)).Replace('-','').ToLowerInvariant() }
+finally { $taskStream.Dispose();$taskHasher.Dispose() }
+Write-Output ("EXE_READY " + $taskDigest + '  ' + $taskExePath)
