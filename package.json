@@ -1,0 +1,33 @@
+{
+  "name": "yundaizhang-local",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "test": "node --test tests/*.test.js",
+    "test:ui": "node tests/browser.mjs",
+    "test:ui:extra": "node tests/browser-extra.mjs",
+    "test:restart": "node tests/restart.mjs",
+    "build:desktop": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File desktop/build.ps1",
+    "test:migration": "node --test desktop/tests/migration.test.mjs",
+    "test:desktop": "node desktop/tests/desktop-smoke.mjs",
+    "test:native": "node desktop/tests/native-dialogs.mjs"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "vue": "^3.5.22"
+  },
+  "devDependencies": {
+    "vite": "^7.1.9",
+    "@vitejs/plugin-vue": "^6.0.1",
+    "playwright": "^1.56.0"
+  },
+  "license": "MIT",
+  "description": "中文单人本机代账管理软件，支持 SQLite 持久化与 Windows 桌面 EXE"
+}
