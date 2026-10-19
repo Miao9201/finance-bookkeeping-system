@@ -14,8 +14,8 @@ using System.Windows.Forms;
 [assembly: AssemblyTitle("财务代账系统")]
 [assembly: AssemblyProduct("财务代账系统")]
 [assembly: AssemblyDescription("单人本机代账管理软件")]
-[assembly: AssemblyVersion("1.0.1.0")]
-[assembly: AssemblyFileVersion("1.0.1.0")]
+[assembly: AssemblyVersion("1.0.2.0")]
+[assembly: AssemblyFileVersion("1.0.2.0")]
 
 public sealed class DesktopOptions {
     public string RuntimeDir;
@@ -56,7 +56,7 @@ internal static class DesktopProgram {
             using(Stream s=Assembly.GetExecutingAssembly().GetManifestResourceStream("payload.sha256"))
             using(StreamReader reader=new StreamReader(s)) payloadHash=reader.ReadToEnd().Trim();
             string cacheRoot=Path.Combine(userRoot,"runtime");
-            runtime=Path.Combine(cacheRoot,"1.0.1-"+payloadHash.Substring(0,16));
+            runtime=Path.Combine(cacheRoot,"1.0.2-"+payloadHash.Substring(0,16));
             if(!IsReady(runtime,payloadHash)) {
                 using(Form splash=new Form()) {
                     splash.Text="财务代账系统"; splash.ClientSize=new Size(440,150); splash.StartPosition=FormStartPosition.CenterScreen;

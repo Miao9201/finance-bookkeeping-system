@@ -21,6 +21,7 @@ try{
  await page.goto(base);await page.getByRole('heading',{name:'工作台.'}).waitFor();
  assert.equal(await page.title(),'财务代账系统 · 本地工作台');
  assert.equal(await page.getByRole('button',{name:'财务代账系统工作台',exact:true}).locator('.brand-name').innerText(),'财务代账系统');
+ assert.equal(await page.locator('.brand .edition').count(),0);
  await nav('客户管理');await page.getByRole('button',{name:'＋ 新增客户',exact:true}).click();
  await dialog().getByLabel('企业名称').fill('集成验证示例有限公司');await dialog().getByLabel('联系人',{exact:true}).fill('虚构联系人');await dialog().getByLabel('联系方式',{exact:true}).fill('示例联系方式');await save('保存记录');
  assert.equal((await state()).customers.length,1);

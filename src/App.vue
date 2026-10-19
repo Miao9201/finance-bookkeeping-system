@@ -85,7 +85,7 @@ onMounted(reload);
     <header class="topbar">
       <button class="brand" @click="navigate('dashboard')" aria-label="财务代账系统工作台">
         <span class="brand-mark"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M9 23h14a6 6 0 0 0 .3-12A8 8 0 0 0 8 9.8 6.6 6.6 0 0 0 9 23Z" fill="white"/><path d="m12 17 3 3 6-7" stroke="#2468ed" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        <span class="brand-name">财务代账系统</span><span class="edition">本地版</span>
+        <span class="brand-name">财务代账系统</span>
       </button>
       <div class="topbar-context"><span class="topbar-divider"></span><span>让代账工作，井然有序</span></div>
       <div class="topbar-right"><span class="local-status"><i></i> 数据保存在本机</span><button class="topbar-backup" @click="navigate('maintenance')"><svg class="icon"><use href="#icon-shield"/></svg><span>备份与恢复</span></button><span class="topbar-divider"></span><div class="user-avatar" aria-label="本地管理员">管</div><span class="user-name">管理员</span><button class="mobile-menu" @click="mobileNav = !mobileNav" aria-label="展开导航"><svg class="icon"><use href="#icon-checklist"/></svg></button></div>

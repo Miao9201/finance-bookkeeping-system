@@ -24,7 +24,7 @@
 
 ## Windows 双击使用
 
-1. 在 [Releases](../../releases/latest) 下载 `Finance-Bookkeeping-System-v1.0.1-Windows-x64.zip`，解压到长期保留的文件夹。
+1. 在 [Releases](../../releases/latest) 下载 `Finance-Bookkeeping-System-v1.0.2-Windows-x64.zip`，解压到长期保留的文件夹。
 2. 双击 `财务代账系统.exe`。EXE 已包含 Node.js 和业务代码，无须安装 npm 或启动终端。
 3. 如需桌面入口，右键 `创建桌面快捷方式.ps1`，选择“使用 PowerShell 运行”。快捷方式指向解压目录，请勿随后移动或删除该目录。
 

@@ -18,6 +18,7 @@ async function launch(){
  const end=Date.now()+60000;while(Date.now()<end){if(child.exitCode!==null)throw new Error('Desktop exited: '+await readFile(join(data,'desktop.log'),'utf8').catch(()=>''));try{const r=await fetch(`http://127.0.0.1:${port}/json/version`);if(r.ok)break;}catch{}await new Promise(r=>setTimeout(r,250));}
  browser=await chromium.connectOverCDP(`http://127.0.0.1:${port}`,{noDefaults:true});let tries=100;while(tries--){page=browser.contexts().flatMap(c=>c.pages()).find(p=>/^http:\/\/127\.0\.0\.1:\d+\//.test(p.url()));if(page)break;await new Promise(r=>setTimeout(r,200));}
  assert.ok(page,'Actual WebView2 business page available');base=new URL(page.url()).origin;await page.getByRole('heading',{name:'工作台.'}).waitFor(); assert.equal(await page.title(),'财务代账系统 · 本地工作台'); assert.equal(await page.getByRole('button',{name:'财务代账系统工作台',exact:true}).locator('.brand-name').innerText(),'财务代账系统');
+ assert.equal(await page.locator('.brand .edition').count(),0);
 }
 async function stop(){
  await browser.close();browser=null;
