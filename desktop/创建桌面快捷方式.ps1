@@ -9,6 +9,8 @@ $taskShortcut=$taskShell.CreateShortcut($taskLink)
 $taskShortcut.TargetPath=$taskExe
 $taskShortcut.WorkingDirectory=$PSScriptRoot
 $taskShortcut.IconLocation=$taskExe+',0'
+$taskIcon=Join-Path $PSScriptRoot '财务代账系统.ico'
+if(Test-Path -LiteralPath $taskIcon){$taskShortcut.IconLocation=$taskIcon}
 $taskShortcut.Description='财务代账系统 · 本机客户、代账业务与账务管理'
 $taskShortcut.WindowStyle=1
 $taskShortcut.Save()

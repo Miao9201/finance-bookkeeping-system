@@ -85,7 +85,7 @@ onMounted(reload);
   <div class="app-shell">
     <header class="topbar">
       <button class="brand" @click="navigate('dashboard')" aria-label="财务代账系统工作台">
-        <span class="brand-mark"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M9 23h14a6 6 0 0 0 .3-12A8 8 0 0 0 8 9.8 6.6 6.6 0 0 0 9 23Z" fill="white"/><path d="m12 17 3 3 6-7" stroke="#2468ed" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="brand-mark"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><rect x="7" y="4" width="19" height="24" rx="3" fill="white"/><path d="M12 5v22M7 10h3M7 16h3M7 22h3M16 11h6" stroke="#2468ed" stroke-width="1.7" stroke-linecap="round"/><path d="m15 19 3 3 6-7" stroke="#2468ed" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
         <span class="brand-name">财务代账系统</span>
       </button>
       <div class="topbar-context"><span class="topbar-divider"></span><span>让代账工作，井然有序</span></div>
