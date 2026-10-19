@@ -1,6 +1,6 @@
 import {chromium} from 'playwright';
 import {spawn,execFile} from 'node:child_process';import {promisify} from 'node:util';import {mkdtemp,readFile,rm} from 'node:fs/promises';import {tmpdir} from 'node:os';import {resolve,join,dirname,basename,sep} from 'node:path';import {fileURLToPath} from 'node:url';import assert from 'node:assert/strict';
-const source=dirname(dirname(fileURLToPath(import.meta.url))),exe=resolve(process.env.YUNDAIZHANG_EXE_PATH || resolve(source,'../release/云代账.exe'));
+const source=dirname(dirname(fileURLToPath(import.meta.url))),exe=resolve(process.env.YUNDAIZHANG_EXE_PATH || resolve(source,'../release/财务代账系统.exe'));
 const data=await mkdtemp(join(tmpdir(),'yundaizhang-dialog-'));const child=spawn(exe,['--data-dir',data,'--debug-port','32992'],{stdio:'ignore',windowsHide:false});let browser;
 try{
  for(let i=0;i<200;i++){try{if((await fetch('http://127.0.0.1:32992/json/version')).ok)break;}catch{}await new Promise(r=>setTimeout(r,100));}

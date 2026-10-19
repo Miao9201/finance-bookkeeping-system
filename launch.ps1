@@ -6,7 +6,7 @@ try {
     $existing = $null
     try { $existing = Invoke-RestMethod -Uri "$appUrl/api/state" -TimeoutSec 2 } catch {}
     if ($existing -and $existing.code -eq 0 -and $existing.data.system.mode -eq '本机单人模式') {
-        Write-Host "云代账已在运行：$appUrl"
+        Write-Host "财务代账系统已在运行：$appUrl"
         if (!$NoBrowser) { Start-Process $appUrl }
         exit 0
     }
@@ -37,8 +37,8 @@ try {
         try { $stateResult = Invoke-RestMethod -Uri "$appUrl/api/state" -TimeoutSec 1; if ($stateResult.code -eq 0 -and $stateResult.data.system.mode -eq '本机单人模式') { $ready = $true; break } } catch {}
     }
     if (!$ready) { throw '本地服务没有及时响应，请查看 data\server-error.log。' }
-    Write-Host "云代账已启动：$appUrl"
+    Write-Host "财务代账系统已启动：$appUrl"
     Write-Host "数据目录：$taskData"
-    Write-Host '关闭浏览器后服务仍在本机运行。需要停止时请双击“停止云代账.cmd”。'
+    Write-Host '关闭浏览器后服务仍在本机运行。需要停止时请双击“停止财务代账系统.cmd”。'
     if (!$NoBrowser) { Start-Process $appUrl }
 } catch { Write-Host $_.Exception.Message -ForegroundColor Red; exit 1 }

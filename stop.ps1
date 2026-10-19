@@ -7,4 +7,4 @@ if (!$taskProcess) { Write-Host '服务已经停止。'; exit 0 }
 $taskEntry = Join-Path $PSScriptRoot 'server\index.js'
 if ($taskProcess.Name -ne 'node.exe' -or !$taskProcess.CommandLine.Contains($taskEntry)) { Write-Host '进程已变化，未停止其他程序。'; exit 1 }
 Stop-Process -Id $taskProcessId
-Write-Host '云代账服务已停止，本地数据已保留。'
+Write-Host '财务代账系统服务已停止，本地数据已保留。'

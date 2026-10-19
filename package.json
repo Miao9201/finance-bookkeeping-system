@@ -1,6 +1,6 @@
 {
-  "name": "yundaizhang-local",
-  "version": "1.0.0",
+  "name": "finance-bookkeeping-system",
+  "version": "1.0.1",
   "private": true,
   "type": "module",
   "engines": {

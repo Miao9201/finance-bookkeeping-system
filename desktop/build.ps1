@@ -38,7 +38,7 @@ $taskIconStream=[System.IO.File]::Create((Join-Path $taskBuild 'app.ico'))
 $taskIcon.Save($taskIconStream);$taskIconStream.Dispose();$taskIcon.Dispose();$taskGraphics.Dispose();$taskBitmap.Dispose();$taskPen.Dispose();$taskBlue.Dispose();$taskWhite.Dispose()
 $taskCompiler=Join-Path $env:WINDIR 'Microsoft.NET\Framework64\v4.0.30319\csc.exe'
 $taskRefs=@('System.dll','System.Core.dll','System.Drawing.dll','System.Windows.Forms.dll','System.Web.Extensions.dll','System.IO.Compression.dll','System.IO.Compression.FileSystem.dll',(Join-Path $SdkDirectory 'lib\net462\Microsoft.Web.WebView2.Core.dll'),(Join-Path $SdkDirectory 'lib\net462\Microsoft.Web.WebView2.WinForms.dll'))
-$taskArgs=@('/nologo','/target:winexe','/platform:x64','/optimize+',('/out:'+(Join-Path $taskOutput '云代账.exe')),('/win32manifest:'+(Join-Path $taskSource 'app.manifest')),('/win32icon:'+(Join-Path $taskBuild 'app.ico')),('/resource:'+(Join-Path $taskBuild 'payload.zip')+',payload.zip'),('/resource:'+(Join-Path $taskBuild 'payload.sha256')+',payload.sha256'))
+$taskArgs=@('/nologo','/target:winexe','/platform:x64','/optimize+',('/out:'+(Join-Path $taskOutput '财务代账系统.exe')),('/win32manifest:'+(Join-Path $taskSource 'app.manifest')),('/win32icon:'+(Join-Path $taskBuild 'app.ico')),('/resource:'+(Join-Path $taskBuild 'payload.zip')+',payload.zip'),('/resource:'+(Join-Path $taskBuild 'payload.sha256')+',payload.sha256'))
 foreach ($taskRef in $taskRefs) { $taskArgs+=('/reference:'+$taskRef) }
 $taskArgs+=(Join-Path $taskSource 'Main.cs');$taskArgs+=(Join-Path $taskSource 'DesktopWindow.cs')
 & $taskCompiler @taskArgs
@@ -46,7 +46,7 @@ if ($LASTEXITCODE -ne 0) { throw 'Desktop EXE compilation failed' }
 Copy-Item -LiteralPath (Join-Path $taskSource '创建桌面快捷方式.ps1') -Destination $taskOutput
 foreach ($taskDoc in @('LICENSE','THIRD_PARTY_NOTICES.md')) { Copy-Item -LiteralPath (Join-Path $taskApp $taskDoc) -Destination $taskOutput }
 Copy-Item -LiteralPath (Join-Path $taskApp 'docs\使用说明.md') -Destination $taskOutput
-$taskExePath=Join-Path $taskOutput '云代账.exe'
+$taskExePath=Join-Path $taskOutput '财务代账系统.exe'
 $taskHasher=[System.Security.Cryptography.SHA256]::Create()
 $taskStream=[System.IO.File]::OpenRead($taskExePath)
 try { $taskDigest=[BitConverter]::ToString($taskHasher.ComputeHash($taskStream)).Replace('-','').ToLowerInvariant() }

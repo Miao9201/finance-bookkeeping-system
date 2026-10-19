@@ -1,4 +1,4 @@
-# 云代账 · 本地版
+# 财务代账系统
 
 给单个代账人员使用的中文客户、合同、月度任务与账务管理软件。提供 Windows EXE 桌面版和本机网页模式，业务数据保存在本机 SQLite，关闭后重新打开仍然保留。
 
@@ -24,18 +24,20 @@
 
 ## Windows 双击使用
 
-1. 在 [Releases](../../releases/latest) 下载 `Yundaizhang-v1.0.0-Windows-x64.zip`，解压到长期保留的文件夹。
-2. 双击 `云代账.exe`。EXE 已包含 Node.js 和业务代码，无须安装 npm 或启动终端。
+1. 在 [Releases](../../releases/latest) 下载 `Finance-Bookkeeping-System-v1.0.1-Windows-x64.zip`，解压到长期保留的文件夹。
+2. 双击 `财务代账系统.exe`。EXE 已包含 Node.js 和业务代码，无须安装 npm 或启动终端。
 3. 如需桌面入口，右键 `创建桌面快捷方式.ps1`，选择“使用 PowerShell 运行”。快捷方式指向解压目录，请勿随后移动或删除该目录。
 
 运行环境：Windows 10/11 x64、.NET Framework 4.8、Microsoft Edge WebView2 Runtime。缺少组件时可从 [Microsoft .NET](https://dotnet.microsoft.com/download/dotnet-framework/net48) 和 [WebView2 官方页面](https://developer.microsoft.com/microsoft-edge/webview2/) 安装。EXE 未做商业代码签名，Windows 可能显示未知发布者；可对照 Release 的 SHA-256 校验。
 
 ## 数据与备份
 
+改名版本完整保留原数据目录、SQLite 文件名和备份格式标识；首次打开会继续读取原有账务记录，无须重新建账或转换备份。下列路径中的 `YundaizhangDesktop`、`yundaizhang.sqlite` 和环境变量名属于兼容标识。
+
 - EXE 默认数据：`%LOCALAPPDATA%\YundaizhangDesktop\data\yundaizhang.sqlite`，附件保存在同一 SQLite 数据库中。
 - 桌面运行文件缓存：`%LOCALAPPDATA%\YundaizhangDesktop\runtime\`。更新 EXE 会使用新的运行文件目录，不清空业务数据库。
 - 直接运行网页源码：项目下 `data/yundaizhang.sqlite`；用 `YUNDAIZHANG_DATA_DIR` 指定其他目录。
-- 测试/便携隔离：`云代账.exe --data-dir "D:\BookkeepingData"`。每个数据目录分别限制单实例。
+- 测试/便携隔离：`财务代账系统.exe --data-dir "D:\BookkeepingData"`。每个数据目录分别限制单实例。
 - 请在“数据维护”中导出完整备份，妥善保存到其他磁盘。CSV 用于汇总交换，不是完整备份。恢复备份会替换当前业务数据，请先核对目标目录和备份来源。
 
 数据库、备份和附件可能含客户资料；本仓库不包含这些文件，也请勿将它们作为 Issue 附件上传。当前数据库没有静态加密，适用于受信任的本机 Windows 账户。
@@ -50,7 +52,7 @@ npm run build
 npm start
 ```
 
-浏览器打开 `http://127.0.0.1:3210`，终端按 Ctrl+C 停止。仅监听本机回环地址。Windows 也可在构建后双击 `启动云代账.cmd`，用 `停止云代账.cmd` 停止该启动器自己的后台进程。
+浏览器打开 `http://127.0.0.1:3210`，终端按 Ctrl+C 停止。仅监听本机回环地址。Windows 也可在构建后双击 `启动财务代账系统.cmd`，用 `停止财务代账系统.cmd` 停止该启动器自己的后台进程。
 
 开发界面：先 `npm start`，另一个终端运行 `npm run dev`，按 Vite 输出地址访问。默认代理本机 3210 端口。
 

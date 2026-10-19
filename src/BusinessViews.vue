@@ -77,7 +77,7 @@ async function exportReport(){
  const url=URL.createObjectURL(new Blob(['\uFEFF'+table.map(r=>r.map(quote).join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='客户业务汇总.csv';a.click();URL.revokeObjectURL(url);
 }
 async function downloadBackup(){
-  await action(async()=>{const response=await fetch('/api/backup');if(!response.ok){const result=await response.json();throw new Error(result.message||'备份下载失败');}const url=URL.createObjectURL(await response.blob());const a=document.createElement('a');a.href=url;a.download=`yundaizhang-${today()}.json.gz`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);},'完整备份已生成，请妥善保存下载文件');
+  await action(async()=>{const response=await fetch('/api/backup');if(!response.ok){const result=await response.json();throw new Error(result.message||'备份下载失败');}const url=URL.createObjectURL(await response.blob());const a=document.createElement('a');a.href=url;a.download=`finance-bookkeeping-system-${today()}.json.gz`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);},'完整备份已生成，请妥善保存下载文件');
 }
 async function restore(){if(restoreConfirm.value!=='恢复备份'){error.value='请先输入“恢复备份”确认替换当前数据';return;}if(!restoreFile.value){error.value='请选择本软件导出的备份文件';return;}if(restoreFile.value.size>96*1024*1024){error.value='应用内备份文件最大 96 MiB；更大的数据库请停止服务后复制完整 data 文件夹';return;}await action(()=>fileBase64(restoreFile.value).then(content=>api('/restore',{content})),'备份已恢复，恢复前数据已自动另存备份');restoreConfirm.value='';}
 </script>

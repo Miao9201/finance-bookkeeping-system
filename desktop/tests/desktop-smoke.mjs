@@ -8,7 +8,7 @@ import {resolve,dirname,join,basename,sep} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {chromium} from 'playwright';
 const source=dirname(dirname(fileURLToPath(import.meta.url)));
-const exe=resolve(process.env.YUNDAIZHANG_EXE_PATH || resolve(source,'../release/云代账.exe'));
+const exe=resolve(process.env.YUNDAIZHANG_EXE_PATH || resolve(source,'../release/财务代账系统.exe'));
 assert.ok(existsSync(exe),'Built desktop EXE must exist');
 const data=await mkdtemp(join(tmpdir(),'yundaizhang-desktop-'));
 const port=32991;let child,browser,page,base;
@@ -17,7 +17,7 @@ async function launch(){
  child=spawn(exe,['--data-dir',data,'--debug-port',String(port),'--test-mode'],{windowsHide:false,stdio:'ignore'});
  const end=Date.now()+60000;while(Date.now()<end){if(child.exitCode!==null)throw new Error('Desktop exited: '+await readFile(join(data,'desktop.log'),'utf8').catch(()=>''));try{const r=await fetch(`http://127.0.0.1:${port}/json/version`);if(r.ok)break;}catch{}await new Promise(r=>setTimeout(r,250));}
  browser=await chromium.connectOverCDP(`http://127.0.0.1:${port}`,{noDefaults:true});let tries=100;while(tries--){page=browser.contexts().flatMap(c=>c.pages()).find(p=>/^http:\/\/127\.0\.0\.1:\d+\//.test(p.url()));if(page)break;await new Promise(r=>setTimeout(r,200));}
- assert.ok(page,'Actual WebView2 business page available');base=new URL(page.url()).origin;await page.getByRole('heading',{name:'工作台.'}).waitFor();
+ assert.ok(page,'Actual WebView2 business page available');base=new URL(page.url()).origin;await page.getByRole('heading',{name:'工作台.'}).waitFor(); assert.equal(await page.title(),'财务代账系统 · 本地工作台'); assert.equal(await page.getByRole('button',{name:'财务代账系统工作台',exact:true}).locator('.brand-name').innerText(),'财务代账系统');
 }
 async function stop(){
  await browser.close();browser=null;

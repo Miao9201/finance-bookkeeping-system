@@ -31,7 +31,7 @@ public sealed class DesktopWindow : Form
     {
         if (options == null) throw new ArgumentNullException("options");
         this.options = options;
-        Text = "云代账 · 本地版";
+        Text = "财务代账系统";
         StartPosition = FormStartPosition.CenterScreen;
         Size = new Size(1440, 1000);
         MinimumSize = new Size(1000, 700);
@@ -42,7 +42,7 @@ public sealed class DesktopWindow : Form
         browser = new WebView2 { Dock = DockStyle.Fill, Visible = false, DefaultBackgroundColor = Color.White };
         status = new Label {
             Dock = DockStyle.Fill,
-            Text = "正在启动云代账…\r\n首次打开可能需要几秒钟。",
+            Text = "正在启动财务代账系统…\r\n首次打开可能需要几秒钟。",
             TextAlign = ContentAlignment.MiddleCenter,
             Font = new Font("Microsoft YaHei", 12),
             Padding = new Padding(48)
@@ -65,7 +65,7 @@ public sealed class DesktopWindow : Form
             string url = await backendReady.Task;
             if (closing) return;
             appOrigin = new Uri(url).GetLeftPart(UriPartial.Authority);
-            status.Text = "正在打开云代账界面…";
+            status.Text = "正在打开财务代账系统界面…";
 
             CoreWebView2EnvironmentOptions environmentOptions = new CoreWebView2EnvironmentOptions();
             if (options.DebugPort > 0)
@@ -83,7 +83,7 @@ public sealed class DesktopWindow : Form
         {
             if (!closing)
             {
-                ShowFailure("云代账启动失败", error);
+                ShowFailure("财务代账系统启动失败", error);
             }
         }
         if (failed && !closing) await StopBackendAsync();
@@ -94,7 +94,7 @@ public sealed class DesktopWindow : Form
         string nodePath = Path.Combine(options.RuntimeDir, "node.exe");
         string entryPath = Path.Combine(options.RuntimeDir, "desktop-server.mjs");
         if (!File.Exists(nodePath) || !File.Exists(entryPath))
-            throw new FileNotFoundException("程序文件不完整，请重新运行完整的云代账程序包。");
+            throw new FileNotFoundException("程序文件不完整，请重新运行完整的财务代账系统程序包。");
         ProcessStartInfo start = new ProcessStartInfo {
             FileName = nodePath,
             Arguments = "\"" + entryPath + "\"",
@@ -134,7 +134,7 @@ public sealed class DesktopWindow : Form
             try { message += "退出代码：" + backend.ExitCode; } catch { }
             Log(message);
             backendReady.TrySetException(new IOException(message));
-            if (!closing) OnUi(delegate { ShowFailure("本地服务已停止，请关闭后重新打开云代账", new IOException(message)); });
+            if (!closing) OnUi(delegate { ShowFailure("本地服务已停止，请关闭后重新打开财务代账系统", new IOException(message)); });
         };
         if (!backend.Start()) throw new IOException("无法启动本地服务。");
         backend.BeginOutputReadLine();
@@ -166,7 +166,7 @@ public sealed class DesktopWindow : Form
         core.WindowCloseRequested += delegate { owner.Close(); };
         core.ProcessFailed += delegate(object sender, CoreWebView2ProcessFailedEventArgs args) {
             Log("WebView2 process failed: " + args.ProcessFailedKind);
-            if (mainWindow && !closing) ShowFailure("界面进程已停止，请关闭后重新打开云代账", new IOException(args.ProcessFailedKind.ToString()));
+            if (mainWindow && !closing) ShowFailure("界面进程已停止，请关闭后重新打开财务代账系统", new IOException(args.ProcessFailedKind.ToString()));
         };
         if (mainWindow)
         {
@@ -179,7 +179,7 @@ public sealed class DesktopWindow : Form
                         Log("Ignored canceled navigation after the interface loaded (for example, a download).");
                         return;
                     }
-                    ShowFailure("云代账界面加载失败", new IOException(args.WebErrorStatus.ToString()));
+                    ShowFailure("财务代账系统界面加载失败", new IOException(args.WebErrorStatus.ToString()));
                     return;
                 }
                 interfaceRendered = true;
@@ -227,10 +227,10 @@ public sealed class DesktopWindow : Form
                 bool printRequested=Convert.ToBoolean(print);
                 BeginInvoke(new Action(async delegate {
                     try { await ShowPrintPreviewAsync(key,document,printRequested); }
-                    catch(Exception error) { Log("Print preview failed: "+error);if(!closing)MessageBox.Show(this,"打印预览无法打开："+error.Message,"云代账",MessageBoxButtons.OK,MessageBoxIcon.Error); }
+                    catch(Exception error) { Log("Print preview failed: "+error);if(!closing)MessageBox.Show(this,"打印预览无法打开："+error.Message,"财务代账系统",MessageBoxButtons.OK,MessageBoxIcon.Error); }
                 }));
             }
-            catch (Exception error) { Log("Print preview failed: " + error); if (!closing) MessageBox.Show(this,"打印预览无法打开："+error.Message,"云代账",MessageBoxButtons.OK,MessageBoxIcon.Error); }
+            catch (Exception error) { Log("Print preview failed: " + error); if (!closing) MessageBox.Show(this,"打印预览无法打开："+error.Message,"财务代账系统",MessageBoxButtons.OK,MessageBoxIcon.Error); }
         };
         // WebView2 replaces a window.open target asynchronously; keep synchronous voucher writes intact.
         await browser.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(@"
@@ -257,7 +257,7 @@ public sealed class DesktopWindow : Form
             return;
         }
         if (closing) return;
-        preview = new PrintPreview { Window = new Form { Text="凭证打印 · 云代账",StartPosition=FormStartPosition.CenterParent,Size=new Size(1100,850),MinimumSize=new Size(700,500),Icon=Icon }, View=new WebView2 { Dock=DockStyle.Fill,DefaultBackgroundColor=Color.White },PrintRequested=print };
+        preview = new PrintPreview { Window = new Form { Text="凭证打印 · 财务代账系统",StartPosition=FormStartPosition.CenterParent,Size=new Size(1100,850),MinimumSize=new Size(700,500),Icon=Icon }, View=new WebView2 { Dock=DockStyle.Fill,DefaultBackgroundColor=Color.White },PrintRequested=print };
         printPreviews.Add(id,preview); popupWindows.Add(preview.Window);
         preview.Window.Controls.Add(preview.View);
         PrintPreview retained=preview;
@@ -268,7 +268,7 @@ public sealed class DesktopWindow : Form
         Log("Printable document controller ready.");
         if (closing || preview.Window.IsDisposed) return;
         ConfigureBrowser(preview.View,preview.Window,false);
-        preview.View.CoreWebView2.DocumentTitleChanged += delegate { if(!retained.Window.IsDisposed)retained.Window.Text=retained.View.CoreWebView2.DocumentTitle+" · 云代账"; };
+        preview.View.CoreWebView2.DocumentTitleChanged += delegate { if(!retained.Window.IsDisposed)retained.Window.Text=retained.View.CoreWebView2.DocumentTitle+" · 财务代账系统"; };
         preview.View.CoreWebView2.NavigationCompleted += delegate(object sender,CoreWebView2NavigationCompletedEventArgs args) {
             Log("Printable navigation completed: "+args.IsSuccess+" "+args.WebErrorStatus);
             if(!args.IsSuccess || closing || retained.Window.IsDisposed)return;
@@ -301,7 +301,7 @@ public sealed class DesktopWindow : Form
         {
             if (closing) return;
             popup = new Form {
-                Text = "凭证打印 · 云代账",
+                Text = "凭证打印 · 财务代账系统",
                 StartPosition = FormStartPosition.CenterParent,
                 Size = new Size(1100, 850),
                 MinimumSize = new Size(700, 500),
@@ -320,7 +320,7 @@ public sealed class DesktopWindow : Form
             if (closing || popup.IsDisposed) return;
             ConfigureBrowser(popupBrowser, popup, false);
             popupBrowser.CoreWebView2.DocumentTitleChanged += delegate {
-                if (!retainedPopup.IsDisposed) retainedPopup.Text = popupBrowser.CoreWebView2.DocumentTitle + " · 云代账";
+                if (!retainedPopup.IsDisposed) retainedPopup.Text = popupBrowser.CoreWebView2.DocumentTitle + " · 财务代账系统";
             };
             args.NewWindow = popupBrowser.CoreWebView2;
             Log("Opened application popup: " + args.Uri);
@@ -329,7 +329,7 @@ public sealed class DesktopWindow : Form
         {
             Log("Popup failed: " + error);
             if (popup != null && !popup.IsDisposed) popup.Close();
-            if (!closing) MessageBox.Show(this, "打印窗口无法打开：" + error.Message, "云代账", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            if (!closing) MessageBox.Show(this, "打印窗口无法打开：" + error.Message, "财务代账系统", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
         finally
         {
@@ -389,7 +389,7 @@ public sealed class DesktopWindow : Form
                     string fileName = Path.GetFileName(operation.ResultFilePath);
                     OnUi(delegate {
                         if (!closing && !owner.IsDisposed)
-                            MessageBox.Show(owner, "文件未能完整保存：" + fileName + "\r\n\r\n" + reason + "\r\n请检查保存位置后重新导出。", "云代账 · 保存失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            MessageBox.Show(owner, "文件未能完整保存：" + fileName + "\r\n\r\n" + reason + "\r\n请检查保存位置后重新导出。", "财务代账系统 · 保存失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     });
                 }
             };
@@ -406,7 +406,7 @@ public sealed class DesktopWindow : Form
             catch (Exception error) { Log("Download deferral ended after its window closed: " + error.Message); }
         }
         if (saveError != null && !closing && !owner.IsDisposed)
-            MessageBox.Show(owner, "无法保存文件：" + saveError.Message, "云代账 · 保存失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(owner, "无法保存文件：" + saveError.Message, "财务代账系统 · 保存失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
     }
 
     private static string DownloadFailureReason(CoreWebView2DownloadInterruptReason reason)
@@ -465,7 +465,7 @@ public sealed class DesktopWindow : Form
         closing = true;
         foreach (Form popup in new List<Form>(popupWindows))
             if (!popup.IsDisposed) popup.Close();
-        status.Text = "正在关闭云代账并保存本机数据…";
+        status.Text = "正在关闭财务代账系统并保存本机数据…";
         status.Visible = true;
         status.BringToFront();
         await StopBackendAsync();

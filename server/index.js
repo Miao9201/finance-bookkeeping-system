@@ -53,7 +53,7 @@ export function createApp({ dataDir = process.env.YUNDAIZHANG_DATA_DIR || join(p
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
   const instance = createApp(); const port = Number(process.env.PORT || 3210);
   if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error('PORT 必须是有效端口号');
-  const server = instance.app.listen(port, '127.0.0.1', () => console.log(`云代账已启动：http://127.0.0.1:${port}\n本机数据：${instance.dataDir}`));
-  server.on('error', error => { console.error(error.code === 'EADDRINUSE' ? `端口 ${port} 已被占用，请关闭已启动的云代账或修改 PORT。` : error.message); instance.close(); process.exitCode = 1; });
+  const server = instance.app.listen(port, '127.0.0.1', () => console.log(`财务代账系统已启动：http://127.0.0.1:${port}\n本机数据：${instance.dataDir}`));
+  server.on('error', error => { console.error(error.code === 'EADDRINUSE' ? `端口 ${port} 已被占用，请关闭已启动的财务代账系统或修改 PORT。` : error.message); instance.close(); process.exitCode = 1; });
   const stop = () => server.close(() => { instance.close(); process.exit(0); }); process.on('SIGINT', stop); process.on('SIGTERM', stop);
 }

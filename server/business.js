@@ -235,7 +235,7 @@ export function registerBusiness(app, db, { dataDir, dbPath, accountingState, se
     res.set({ 'Content-Type': 'application/octet-stream', 'Content-Disposition': `attachment; filename="attachment-${attachment.id}"; filename*=UTF-8''${encodeURIComponent(attachment.name)}`, 'Content-Length': String(attachment.size) }); res.send(Buffer.from(attachment.content));
   });
   app.delete('/api/attachments/:id', (req, res) => { const attachmentId = id(Number(req.params.id)); transaction(db, () => { entity(db, 'attachments', attachmentId); db.prepare('DELETE FROM attachments WHERE id=?').run(attachmentId); log(db, '删除附件', 'attachments', attachmentId); }); success(res, null); });
-  app.get('/api/backup', (req, res) => { const archive = backupBuffer(db); res.set({ 'Content-Type': 'application/gzip', 'Content-Disposition': `attachment; filename="yundaizhang-${today()}.json.gz"` }); res.send(archive); });
+  app.get('/api/backup', (req, res) => { const archive = backupBuffer(db); res.set({ 'Content-Type': 'application/gzip', 'Content-Disposition': `attachment; filename="finance-bookkeeping-system-${today()}.json.gz"` }); res.send(archive); });
   app.post('/api/restore', (req, res) => {
     const bytes = decodeBase64(req.body?.content, BACKUP_LIMITS.archive);
     const validated = stageBackup(db, bytes, validateAccountingBackup);

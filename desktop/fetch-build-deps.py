@@ -17,7 +17,7 @@ out.mkdir(parents=True, exist_ok=True)
 sdk = Path(a.sdk)
 
 def download(url, target):
-    request = urllib.request.Request(url, headers={'User-Agent': 'Yundaizhang-build/1.0'})
+    request = urllib.request.Request(url, headers={'User-Agent': 'Finance-Bookkeeping-System-build/1.0'})
     with urllib.request.urlopen(request, timeout=60) as response:
         content = response.read()
     target.write_bytes(content)

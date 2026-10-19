@@ -83,15 +83,15 @@ onMounted(reload);
   <svg class="svg-sprite" aria-hidden="true"><defs><symbol v-for="(path, name) in icons" :id="`icon-${name}`" :key="name" viewBox="0 0 24 24"><path :d="path" /></symbol></defs></svg>
   <div class="app-shell">
     <header class="topbar">
-      <button class="brand" @click="navigate('dashboard')" aria-label="云代账工作台">
+      <button class="brand" @click="navigate('dashboard')" aria-label="财务代账系统工作台">
         <span class="brand-mark"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M9 23h14a6 6 0 0 0 .3-12A8 8 0 0 0 8 9.8 6.6 6.6 0 0 0 9 23Z" fill="white"/><path d="m12 17 3 3 6-7" stroke="#2468ed" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        <span class="brand-name">云代账</span><span class="edition">本地版</span>
+        <span class="brand-name">财务代账系统</span><span class="edition">本地版</span>
       </button>
       <div class="topbar-context"><span class="topbar-divider"></span><span>让代账工作，井然有序</span></div>
       <div class="topbar-right"><span class="local-status"><i></i> 数据保存在本机</span><button class="topbar-backup" @click="navigate('maintenance')"><svg class="icon"><use href="#icon-shield"/></svg><span>备份与恢复</span></button><span class="topbar-divider"></span><div class="user-avatar" aria-label="本地管理员">管</div><span class="user-name">管理员</span><button class="mobile-menu" @click="mobileNav = !mobileNav" aria-label="展开导航"><svg class="icon"><use href="#icon-checklist"/></svg></button></div>
     </header>
     <aside class="sidebar" :class="{'is-open': mobileNav}" aria-label="主导航">
-      <div class="workspace-label"><span class="workspace-icon">云</span><span>我的代账工作室<small>LOCAL WORKSPACE</small></span></div>
+      <div class="workspace-label"><span class="workspace-icon">财</span><span>我的代账工作室<small>LOCAL WORKSPACE</small></span></div>
       <nav><div v-for="group in groups" :key="group.label" class="nav-group"><div class="nav-group-label">{{ group.label }}</div><button v-for="item in group.items" :key="item[0]" class="nav-item" :class="{active: page === item[0]}" :aria-current="page === item[0] ? 'page' : undefined" @click="navigate(item[0])"><svg class="icon"><use :href="`#icon-${item[2]}`"/></svg><span>{{ item[1] }}</span><span v-if="item[0] === 'tasks' && state?.dashboard?.overdue_task_count" class="nav-count">{{ state.dashboard.overdue_task_count }}</span></button></div></nav>
       <div class="sidebar-bottom"><div class="future-chip"><span class="future-dots">● ●</span><span>多人协作</span><small>后续功能</small></div><div class="sidebar-footnote"><i></i> 本地服务 · 安心记账</div></div>
     </aside>
@@ -104,7 +104,7 @@ onMounted(reload);
         <AccountingViews v-else-if="accountingPage" :page="page" :state="state" :filter="filter" @changed="reload" @navigate="navigate" />
         <BusinessViews v-else :key="page" :page="page" :state="state" :filter="filter" @changed="reload" @navigate="navigate" />
       </template>
-      <footer class="main-footer"><span>云代账 · 本地版</span><span>专注每一笔账，照顾每一位客户。</span></footer>
+      <footer class="main-footer"><span>财务代账系统</span><span>专注每一笔账，照顾每一位客户。</span></footer>
     </main>
     <div v-if="toast" class="toast" role="status"><svg class="icon"><use href="#icon-bell"/></svg>{{ toast }}</div>
     <div v-if="showDemo" class="modal-mask" @click.self="showDemo = false"><section class="modal modal-small" role="dialog" aria-modal="true" aria-labelledby="demo-title"><div class="modal-header"><h2 id="demo-title">载入虚构示例数据</h2><button class="icon-button" @click="showDemo = false" aria-label="关闭"><svg class="icon"><use href="#icon-close"/></svg></button></div><div class="modal-body"><p>将添加虚构客户、合同及账务记录，帮助你体验完整流程。所有公司与金额仅用于演示。</p><div class="notice">已有业务数据时，系统会阻止导入，确保你的记录安全。</div></div><div class="modal-footer"><button class="btn btn-secondary" @click="showDemo = false">暂不载入</button><button class="btn btn-primary" :disabled="demoLoading" @click="loadDemo">{{ demoLoading ? '正在载入…' : '载入示例' }}</button></div></section></div>

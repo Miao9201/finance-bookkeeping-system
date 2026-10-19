@@ -11,11 +11,11 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
-[assembly: AssemblyTitle("云代账")]
-[assembly: AssemblyProduct("云代账本地版")]
+[assembly: AssemblyTitle("财务代账系统")]
+[assembly: AssemblyProduct("财务代账系统")]
 [assembly: AssemblyDescription("单人本机代账管理软件")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.0.1.0")]
+[assembly: AssemblyFileVersion("1.0.1.0")]
 
 public sealed class DesktopOptions {
     public string RuntimeDir;
@@ -56,13 +56,13 @@ internal static class DesktopProgram {
             using(Stream s=Assembly.GetExecutingAssembly().GetManifestResourceStream("payload.sha256"))
             using(StreamReader reader=new StreamReader(s)) payloadHash=reader.ReadToEnd().Trim();
             string cacheRoot=Path.Combine(userRoot,"runtime");
-            runtime=Path.Combine(cacheRoot,"1.0.0-"+payloadHash.Substring(0,16));
+            runtime=Path.Combine(cacheRoot,"1.0.1-"+payloadHash.Substring(0,16));
             if(!IsReady(runtime,payloadHash)) {
                 using(Form splash=new Form()) {
-                    splash.Text="云代账 · 本地版"; splash.ClientSize=new Size(440,150); splash.StartPosition=FormStartPosition.CenterScreen;
+                    splash.Text="财务代账系统"; splash.ClientSize=new Size(440,150); splash.StartPosition=FormStartPosition.CenterScreen;
                     splash.FormBorderStyle=FormBorderStyle.FixedDialog; splash.MaximizeBox=false;
                     splash.Icon=Icon.ExtractAssociatedIcon(Application.ExecutablePath);
-                    splash.Controls.Add(new Label { Dock=DockStyle.Fill,Text="正在准备云代账…\r\n首次启动需要解包运行环境，请稍候。",TextAlign=ContentAlignment.MiddleCenter,Font=new Font("Microsoft YaHei UI",11) });
+                    splash.Controls.Add(new Label { Dock=DockStyle.Fill,Text="正在准备财务代账系统…\r\n首次启动需要解包运行环境，请稍候。",TextAlign=ContentAlignment.MiddleCenter,Font=new Font("Microsoft YaHei UI",11) });
                     splash.Show(); Application.DoEvents();
                     Extract(cacheRoot,runtime,payloadHash,splash);
                     splash.Close();
@@ -83,7 +83,7 @@ internal static class DesktopProgram {
         catch(OperationCanceledException) { return 0; }
         catch(Exception error) {
             try { File.AppendAllText(Path.Combine(options.DataDir,"desktop.log"),DateTime.Now.ToString("s")+" "+error+Environment.NewLine,Encoding.UTF8); } catch {}
-            MessageBox.Show("云代账未能启动：\r\n"+error.Message+"\r\n\r\n你的本地业务数据不会因此删除。","云代账",MessageBoxButtons.OK,MessageBoxIcon.Error);
+            MessageBox.Show("财务代账系统未能启动：\r\n"+error.Message+"\r\n\r\n你的本地业务数据不会因此删除。","财务代账系统",MessageBoxButtons.OK,MessageBoxIcon.Error);
             return 1;
         }
         finally { if(owns && mutex!=null)mutex.ReleaseMutex();if(mutex!=null)mutex.Dispose(); }
