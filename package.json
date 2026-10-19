@@ -1,6 +1,6 @@
 {
   "name": "finance-bookkeeping-system",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "private": true,
   "type": "module",
   "engines": {
@@ -17,7 +17,8 @@
     "build:desktop": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File desktop/build.ps1",
     "test:migration": "node --test desktop/tests/migration.test.mjs",
     "test:desktop": "node desktop/tests/desktop-smoke.mjs",
-    "test:native": "node desktop/tests/native-dialogs.mjs"
+    "test:native": "node desktop/tests/native-dialogs.mjs",
+    "test:layout": "node tests/layout.mjs"
   },
   "dependencies": {
     "express": "^5.1.0",

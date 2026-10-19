@@ -41,6 +41,7 @@ const toast = ref('');
 const showDemo = ref(false);
 const demoLoading = ref(false);
 const mobileNav = ref(false);
+const mainContent = ref(null);
 let toastTimer;
 const currentTitle = computed(() => groups.flatMap(g => g.items).find(i => i[0] === page.value)?.[1] || '工作台');
 const accountingPage = computed(() => ['accounts','vouchers','ledgers','financial','closing'].includes(page.value));
@@ -49,7 +50,7 @@ function navigate(next, nextFilter = {}) {
   if (!allowed.includes(next)) return;
   page.value = next; filter.value = nextFilter || {}; mobileNav.value = false;
   localStorage.setItem('yundaizhang-page', next);
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  mainContent.value?.scrollTo({ top: 0, behavior: 'auto' });
 }
 function notify(message) {
   if (!message || typeof message !== 'string') return;
@@ -95,7 +96,7 @@ onMounted(reload);
       <nav><div v-for="group in groups" :key="group.label" class="nav-group"><div class="nav-group-label">{{ group.label }}</div><button v-for="item in group.items" :key="item[0]" class="nav-item" :class="{active: page === item[0]}" :aria-current="page === item[0] ? 'page' : undefined" @click="navigate(item[0])"><svg class="icon"><use :href="`#icon-${item[2]}`"/></svg><span>{{ item[1] }}</span><span v-if="item[0] === 'tasks' && state?.dashboard?.overdue_task_count" class="nav-count">{{ state.dashboard.overdue_task_count }}</span></button></div></nav>
       <div class="sidebar-bottom"><div class="future-chip"><span class="future-dots">● ●</span><span>多人协作</span><small>后续功能</small></div><div class="sidebar-footnote"><i></i> 本地服务 · 安心记账</div></div>
     </aside>
-    <main class="main-content">
+    <main ref="mainContent" class="main-content">
       <div class="breadcrumb"><span>工作空间</span><svg class="icon"><use href="#icon-chevron"/></svg><span>{{ currentTitle }}</span><span class="breadcrumb-date">{{ dateLabel }}</span></div>
       <div v-if="error" class="notice danger-notice" role="alert"><div><strong>暂时无法读取数据</strong><div>{{ error }}</div></div><button class="btn btn-secondary" @click="reload()">重新连接</button></div>
       <div v-if="loading" class="loading-panel"><span class="spinner"></span><p>正在读取本地账务数据…</p></div>

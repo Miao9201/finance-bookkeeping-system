@@ -7,6 +7,7 @@ import {tmpdir} from 'node:os';
 import {resolve,dirname,join,basename,sep} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {chromium} from 'playwright';
+import {verifyLayout} from '../../tests/layout.mjs';
 const source=dirname(dirname(fileURLToPath(import.meta.url)));
 const exe=resolve(process.env.YUNDAIZHANG_EXE_PATH || resolve(source,'../release/财务代账系统.exe'));
 assert.ok(existsSync(exe),'Built desktop EXE must exist');
@@ -42,7 +43,7 @@ try{
  const now=new Date(),date=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
  const account=await request('/accounts',{customer_id:1,name:'EXE打印验证账套',start_month:date.slice(0,7)});await request(`/accounts/${account.id}/openings`,{rows:[]},'PUT');await request(`/accounts/${account.id}/enable`,{});await request('/vouchers',{account_id:account.id,date,word:'记',status:'草稿',summary:'原生凭证打印验证',entries:[{subject_code:'1002.01',debit_cents:12829,credit_cents:0},{subject_code:'5001',debit_cents:0,credit_cents:12829}]});
  await page.reload();await nav('凭证管理');await page.getByRole('button',{name:'打印',exact:true}).click();let printPage;for(let i=0;i<100;i++){for(const candidate of browser.contexts().flatMap(c=>c.pages())){if(candidate===page||candidate.isClosed())continue;try{if((await candidate.locator('body').innerText({timeout:200})).includes('原生凭证打印验证')){printPage=candidate;break;}}catch{}}if(printPage)break;await new Promise(r=>setTimeout(r,100));}assert.ok(printPage,'Actual voucher print preview opens');assert.match(await printPage.locator('body').innerText(),/128\.29/);await printPage.close();
- await nav('工作台');assert.deepEqual(errors,[]);await stop();
+ await verifyLayout(page);await nav('工作台');assert.deepEqual(errors,[]);await stop();
  await launch();state=(await(await fetch(base+'/api/state')).json()).data;assert.equal(state.customers[0].name,'EXE虚构验证客户');assert.equal(state.bills[0].amount_cents,12829);assert.equal(await(await fetch(base+'/api/attachments/'+attachment.id)).text(),'EXE KEEP ATTACHMENT');await stop();
  await launch();await browser.close();browser=null;child.kill();await new Promise(r=>child.once('exit',r));let released=false;for(let i=0;i<100;i++){try{await fetch(base+'/api/state');}catch{released=true;break;}await new Promise(r=>setTimeout(r,100));}assert.ok(released,'Owned backend exits when desktop host is force-closed');
  console.log('PASS native EXE: actual window, single instance, customer/bill/upload, byte-exact attachment and CSV downloads, valid full backup, actual voucher print preview, graceful close, restart persistence, parent-crash backend cleanup.');
