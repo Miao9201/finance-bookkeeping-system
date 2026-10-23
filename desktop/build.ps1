@@ -19,30 +19,49 @@ try { & npm.cmd run build; if ($LASTEXITCODE -ne 0) { throw 'Frontend build fail
 & python (Join-Path $taskSource 'build-payload.py') --app $taskApp --sdk $SdkDirectory --node $taskNode --out $taskBuild --node-license $taskNodeLicense
 if ($LASTEXITCODE -ne 0) { throw 'Payload packaging failed' }
 Add-Type -AssemblyName System.Drawing
-$taskBitmap=New-Object System.Drawing.Bitmap(128,128)
-$taskGraphics=[System.Drawing.Graphics]::FromImage($taskBitmap)
-$taskGraphics.SmoothingMode=[System.Drawing.Drawing2D.SmoothingMode]::AntiAlias
+# Render the supplied artwork through a rounded mask; keep the source image unchanged.
+$taskImage=[System.Drawing.Image]::FromFile((Join-Path $taskApp 'src\assets\app-icon.png'))
+$taskMaster=New-Object System.Drawing.Bitmap(1024,1024)
+$taskGraphics=[System.Drawing.Graphics]::FromImage($taskMaster)
 $taskGraphics.Clear([System.Drawing.Color]::Transparent)
-$taskBlue=New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(36,104,237))
-$taskWhite=New-Object System.Drawing.SolidBrush([System.Drawing.Color]::White)
-$taskGraphics.FillEllipse($taskBlue,2,2,124,124)
-$taskBook=New-Object System.Drawing.Drawing2D.GraphicsPath
-$taskBook.AddArc(28,16,24,24,180,90)
-$taskBook.AddArc(80,16,24,24,270,90)
-$taskBook.AddArc(80,88,24,24,0,90)
-$taskBook.AddArc(28,88,24,24,90,90)
-$taskBook.CloseFigure()
-$taskGraphics.FillPath($taskWhite,$taskBook)
-$taskPen=New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb(36,104,237),7)
-$taskPen.StartCap=[System.Drawing.Drawing2D.LineCap]::Round;$taskPen.EndCap=[System.Drawing.Drawing2D.LineCap]::Round
-$taskGraphics.DrawLine($taskPen,48,20,48,108)
-foreach($taskRing in @(40,64,88)) { $taskGraphics.DrawLine($taskPen,28,$taskRing,40,$taskRing) }
-$taskGraphics.DrawLine($taskPen,64,44,88,44)
-$taskGraphics.DrawLines($taskPen,[System.Drawing.Point[]]@((New-Object System.Drawing.Point(60,76)),(New-Object System.Drawing.Point(72,88)),(New-Object System.Drawing.Point(96,60))))
-$taskBitmap.Save((Join-Path $taskBuild 'app-icon-preview.png'),[System.Drawing.Imaging.ImageFormat]::Png)
-$taskIcon=[System.Drawing.Icon]::FromHandle($taskBitmap.GetHicon())
-$taskIconStream=[System.IO.File]::Create((Join-Path $taskBuild 'app.ico'))
-$taskIcon.Save($taskIconStream);$taskIconStream.Dispose();$taskIcon.Dispose();$taskBook.Dispose();$taskGraphics.Dispose();$taskBitmap.Dispose();$taskPen.Dispose();$taskBlue.Dispose();$taskWhite.Dispose()
+$taskGraphics.InterpolationMode=[System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
+$taskShape=New-Object System.Drawing.Drawing2D.GraphicsPath
+$taskDiameter=[single](1024*0.36)
+$taskEdge=[single](1024-$taskDiameter)
+$taskShape.AddArc(0,0,$taskDiameter,$taskDiameter,180,90)
+$taskShape.AddArc($taskEdge,0,$taskDiameter,$taskDiameter,270,90)
+$taskShape.AddArc($taskEdge,$taskEdge,$taskDiameter,$taskDiameter,0,90)
+$taskShape.AddArc(0,$taskEdge,$taskDiameter,$taskDiameter,90,90)
+$taskShape.CloseFigure()
+$taskGraphics.SetClip($taskShape)
+$taskGraphics.DrawImage($taskImage,0,0,1024,1024)
+$taskSizes=@(16,24,32,48,64,128,256)
+$taskFrames=@()
+foreach($taskSize in $taskSizes){
+ $taskBitmap=New-Object System.Drawing.Bitmap($taskSize,$taskSize)
+ $taskResize=[System.Drawing.Graphics]::FromImage($taskBitmap)
+ $taskResize.InterpolationMode=[System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
+ $taskResize.PixelOffsetMode=[System.Drawing.Drawing2D.PixelOffsetMode]::HighQuality
+ $taskResize.DrawImage($taskMaster,0,0,$taskSize,$taskSize)
+ $taskPng=New-Object System.IO.MemoryStream
+ $taskBitmap.Save($taskPng,[System.Drawing.Imaging.ImageFormat]::Png)
+ $taskFrames+=,@($taskSize,$taskPng.ToArray())
+ if($taskSize -eq 256){$taskBitmap.Save((Join-Path $taskBuild 'app-icon-preview.png'),[System.Drawing.Imaging.ImageFormat]::Png)}
+ $taskPng.Dispose();$taskResize.Dispose();$taskBitmap.Dispose()
+}
+$taskWriter=New-Object System.IO.BinaryWriter([System.IO.File]::Create((Join-Path $taskBuild 'app.ico')))
+try{
+ $taskWriter.Write([uint16]0);$taskWriter.Write([uint16]1);$taskWriter.Write([uint16]$taskFrames.Count)
+ $taskOffset=6+16*$taskFrames.Count
+ foreach($taskFrame in $taskFrames){
+  $taskDimension=[byte]($taskFrame[0] % 256)
+  $taskWriter.Write($taskDimension);$taskWriter.Write($taskDimension);$taskWriter.Write([uint16]0)
+  $taskWriter.Write([uint16]1);$taskWriter.Write([uint16]32)
+  $taskWriter.Write([uint32]$taskFrame[1].Length);$taskWriter.Write([uint32]$taskOffset)
+  $taskOffset+=$taskFrame[1].Length
+ }
+ foreach($taskFrame in $taskFrames){$taskWriter.Write([byte[]]$taskFrame[1])}
+}finally{$taskWriter.Dispose();$taskGraphics.Dispose();$taskShape.Dispose();$taskMaster.Dispose();$taskImage.Dispose()}
 $taskCompiler=Join-Path $env:WINDIR 'Microsoft.NET\Framework64\v4.0.30319\csc.exe'
 $taskRefs=@('System.dll','System.Core.dll','System.Drawing.dll','System.Windows.Forms.dll','System.Web.Extensions.dll','System.IO.Compression.dll','System.IO.Compression.FileSystem.dll',(Join-Path $SdkDirectory 'lib\net462\Microsoft.Web.WebView2.Core.dll'),(Join-Path $SdkDirectory 'lib\net462\Microsoft.Web.WebView2.WinForms.dll'))
 $taskArgs=@('/nologo','/target:winexe','/platform:x64','/optimize+',('/out:'+(Join-Path $taskOutput '财务代账系统.exe')),('/win32manifest:'+(Join-Path $taskSource 'app.manifest')),('/win32icon:'+(Join-Path $taskBuild 'app.ico')),('/resource:'+(Join-Path $taskBuild 'payload.zip')+',payload.zip'),('/resource:'+(Join-Path $taskBuild 'payload.sha256')+',payload.sha256'))
